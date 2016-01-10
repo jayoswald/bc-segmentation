@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include "omp.h"
 #include "timer.h"
 
 struct Graph {
@@ -57,7 +58,6 @@ Graph random_graph(int n) {
 std::vector<double> brandes(const Graph &g) {
 
     const auto N = g.vertices.size();
-    std::vector<double> cb(N, 0.0);
 
     struct Paths {
         int paths[6];
@@ -65,11 +65,15 @@ std::vector<double> brandes(const Graph &g) {
         void add(int i) { paths[count++] = i; }
     };
 
-    auto order = std::vector<int>(N);
-    for (auto s: g.vertices) {
+    std::vector<double> cb(N, 0.0);;
+
+    #pragma omp parallel for
+    for (int k=0; k<g.vertices.size(); ++k) { 
+        auto s = g.vertices[k];
         auto P = std::vector<Paths>(N);
         auto sigma = std::vector<double>(N);   sigma[s] = 1.0;
         auto dist  = std::vector<int>(N,-1);    dist[s] = 0;
+        auto order = std::vector<int>(N);
 
         order[0] = s;
         int last = 0;
@@ -98,6 +102,7 @@ std::vector<double> brandes(const Graph &g) {
                 delta[v] += sigma[v]/sigma[w]*(1.0+delta[w]);
             }
             if (w != s) {
+                #pragma omp atomic 
                 cb[w] += delta[w];
             }
         }
