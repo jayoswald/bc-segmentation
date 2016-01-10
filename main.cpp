@@ -1,6 +1,5 @@
 #include <vector>
 #include <iostream>
-#include <queue>
 #include <fstream>
 #include "timer.h"
 
@@ -29,28 +28,29 @@ int main() {
 Graph random_graph(int n) {
     Graph g;
 
-    int a = n*n;
-    int v = n*n*n;
-    
-    for (int i=0; i<v; ++i) {
+    const int A = n*n;
+    const int V = n*n*n;
+    int total_neighbors = 0;
+
+    g.neighbors.assign(V, {});
+
+    for (int i=0; i<V; ++i) {
         g.vertices.push_back(i);
-        g.neighbors.emplace_back();
 
         int ix = i%n;
         int iy = (i/n)%n;
-        int iz = i/a;
+        int iz = i/A;
 
         if (ix-1 > 0) g.neighbors[i].push_back(i-1);
         if (ix+1 < n) g.neighbors[i].push_back(i+1);
-
         if (iy-1 > 0) g.neighbors[i].push_back(i-n);
         if (iy+1 < n) g.neighbors[i].push_back(i+n);
-
-        if (iz-1 > 0) g.neighbors[i].push_back(i-a);
-        if (iz+1 < n) g.neighbors[i].push_back(i+a);
+        if (iz-1 > 0) g.neighbors[i].push_back(i-A);
+        if (iz+1 < n) g.neighbors[i].push_back(i+A);
+        total_neighbors += g.neighbors[i].size();
     }
     std::cout << "Created graph with " << g.vertices.size() 
-              << " nodes and " << g.neighbors.size()/2 << " edges.\n";
+              << " nodes and " << total_neighbors/2 << " edges.\n";
     return g;
 }
 
@@ -59,37 +59,42 @@ std::vector<double> brandes(const Graph &g) {
     const auto N = g.vertices.size();
     std::vector<double> cb(N, 0.0);
 
+    struct Paths {
+        int paths[6];
+        int count = 0;
+        void add(int i) { paths[count++] = i; }
+    };
+
+    auto order = std::vector<int>(N);
     for (auto s: g.vertices) {
-        auto P = std::vector<std::vector<int>>(N);
+        auto P = std::vector<Paths>(N);
         auto sigma = std::vector<double>(N);   sigma[s] = 1.0;
-        auto dist = std::vector<int>(N,-1);    dist[s] = 0;
-        std::queue<int> queue;
-        queue.push(s);
+        auto dist  = std::vector<int>(N,-1);    dist[s] = 0;
 
-        // stack stores nodes with increasing distrance from node s.
-        auto stack = std::vector<int>{};
+        order[0] = s;
+        int last = 0;
 
-        while (!queue.empty()) {
-            auto v = queue.front(); queue.pop();
-            stack.push_back(v);
+        for (int i=0; i<N; ++i) {
+            if (i > last) break;
+            auto v = g.vertices[order[i]];
             for (auto w: g.neighbors[v]) {
-                
                 // w is found for the first time?
-                if (dist[w] < 0) {
-                    queue.push(w);
+                if (dist[w] == -1) {
+                    order[++last] = w;
                     dist[w] = dist[v] + 1;
                 }
                 // shortest path to w via v?
                 if (dist[w] == dist[v]+1) {
                     sigma[w] += sigma[v];
-                    P[w].push_back(v);
+                    P[w].add(v);
                 }
             }
         }
         auto delta = std::vector<double>(N, 0.0);
-        for (auto it=stack.rbegin(); it!=stack.rend(); ++it) {
-            auto w = *it;
-            for (auto v: P[w]) {
+        for (auto i=last; i>=0; i--) {
+            auto w = order[i];
+            for (int j=0; j<P[w].count; ++j) {
+                int v = P[w].paths[j];
                 delta[v] += sigma[v]/sigma[w]*(1.0+delta[w]);
             }
             if (w != s) {
