@@ -42,11 +42,11 @@ Graph random_graph(int n) {
         int iy = (i/n)%n;
         int iz = i/A;
 
-        if (ix-1 > 0) g.neighbors[i].push_back(i-1);
+        if (ix > 0)   g.neighbors[i].push_back(i-1);
         if (ix+1 < n) g.neighbors[i].push_back(i+1);
-        if (iy-1 > 0) g.neighbors[i].push_back(i-n);
+        if (iy > 0)   g.neighbors[i].push_back(i-n);
         if (iy+1 < n) g.neighbors[i].push_back(i+n);
-        if (iz-1 > 0) g.neighbors[i].push_back(i-A);
+        if (iz > 0)   g.neighbors[i].push_back(i-A);
         if (iz+1 < n) g.neighbors[i].push_back(i+A);
         total_neighbors += g.neighbors[i].size();
     }
