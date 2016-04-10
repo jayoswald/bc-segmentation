@@ -1,2 +1,5 @@
 result
-bc
+src/bc
+*.vtp
+*.o
+tags
