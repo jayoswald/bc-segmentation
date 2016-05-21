@@ -20,17 +20,18 @@ std::vector<double> betweeness_centrality(const Graph &g) {
 
     #pragma omp parallel for
     for (int k=0; k<g.vertices.size(); ++k) { 
+        // Start at a vertex s.
         auto s = g.vertices[k];
         auto P = std::vector<Paths>(N);
-        auto sigma = std::vector<double>(N);   sigma[s] = 1.0;
+        auto sigma = std::vector<double>(N,0.0);   sigma[s] = 1.0;
         auto dist  = std::vector<int>(N,-1);    dist[s] = 0;
-        auto order = std::vector<int>(N);
+        auto order = std::vector<int>(N,-1);
 
-        order[0] = s;
         int last = 0;
+        order[last] = s;
 
-        for (int i=0; i<N; ++i) {
-            if (i > last) break;
+        // Loop over all vertices.
+        for (int i=0; i<=last; ++i) {
             auto v = g.vertices[order[i]];
             for (auto w: g.neighbors[v]) {
                 // w is found for the first time?
@@ -46,7 +47,7 @@ std::vector<double> betweeness_centrality(const Graph &g) {
             }
         }
         auto delta = std::vector<double>(N, 0.0);
-        for (auto i=last; i>=0; i--) {
+        for (int i=last; i>=0; i--) {
             auto w = order[i];
             for (int j=0; j<P[w].count; ++j) {
                 int v = P[w].paths[j];

@@ -6,15 +6,21 @@
 #include "graph.h"
 #include "voxel_set.h"
 #include "vtk_writer.h"
+#include "string_tools.h"
 
 int main(int argc, char **argv) {
-
-    if (argc != 2) {
+    std::vector<Voxel> voxels;    
+    if (argc == 2) {
+        voxels = read_voxelset(argv[1]); 
+    }
+    else if (argc == 3) {
+        voxels = read_voxelset(argv[1], from_string<int>(argv[2])); 
+    }
+    else {
         std::cerr << "bc [voxelfile]\n";
+        std::cerr << "bc [voxelfile] [n]\n";
         exit(1);
     }
-
-    auto voxels = read_voxelset(argv[1]); 
     auto graph = voxelset_to_graph(voxels);
     auto timer = Timer();
     auto cb = betweeness_centrality(graph);

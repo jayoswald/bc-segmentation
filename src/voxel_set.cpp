@@ -15,6 +15,32 @@ std::vector<Voxel> read_voxelset(std::string path) {
     return voxels;
 }
 
+//! Reads a set of voxels from an input file containing multiple clusters.
+std::vector<Voxel> read_voxelset(std::string path, int i) {
+    std::vector<Voxel> voxels;
+    std::fstream fid(path, std::ios::in);
+    int ct = 0;
+    while (fid) {
+        auto line = read_line(fid);
+        if (startswith(line, "begin cluster")) {
+            ct += 1;
+        }
+        else if (startswith(line, "end cluster") && ct == i) {
+            break;
+        }
+        else if (ct == i) {
+            Voxel v;
+            std::istringstream ss(line);
+            ss >> v.i >> v.j >> v.k;
+            if (fid) {
+                voxels.push_back(v);
+            }
+        }
+    }
+    std::sort(voxels.begin(), voxels.end());
+    return voxels;
+}
+
 Graph voxelset_to_graph(std::vector<Voxel> &voxels) {
 
     Graph g;
@@ -24,17 +50,15 @@ Graph voxelset_to_graph(std::vector<Voxel> &voxels) {
     for (int v=0; v<voxels.size(); ++v) {
         g.vertices.push_back(v);
         for (int n=0; n<6; n++) {
-            auto nv = voxels[v].neighbor(n);
-            auto iter = std::lower_bound(voxels.begin(), voxels.end(), nv);
-            if (iter->i == nv.i && iter->j == nv.j && iter->k == nv.k) {
-                g.neighbors[v].push_back(std::distance(voxels.begin(), iter));
+            auto nv = index(voxels, voxels[v].neighbor(n));
+            if (nv != -1) {
+                g.neighbors[v].push_back(nv);
                 num_neighbors += 1;
             }
         }
     }
     std::cout << "Read " << voxels.size() << " voxels connected with "
               << num_neighbors << " neighbors.\n";
-
     return g;
 }
 
