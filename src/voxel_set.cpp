@@ -11,7 +11,6 @@ VoxelSet read_voxelset(std::string path, int i) {
     std::ifstream file(path, std::ios::in|std::ios::binary);
     boost::iostreams::filtering_istream in;
     if (path.substr(path.length() - 3) == ".gz") {
-        std::cout << "Using gzip decompressor\n";
         in.push(boost::iostreams::gzip_decompressor());
     }
     in.push(file);

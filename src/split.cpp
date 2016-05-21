@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include "voxel_set.h"
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 
 typedef std::vector<std::vector<size_t>> Clusters;
 
@@ -13,8 +15,15 @@ int main(int narg, char **argv) {
     }
     auto vs = read_voxelset(argv[1]);
     auto clusters = clustering(vs);
-
-    std::fstream out(argv[2], std::ios::out);
+    // If file extension is .gz then use gzip to write a compressed
+    // file, otherwise just write plain ascii. 
+    std::string path = argv[2]; 
+    std::fstream file(argv[2], std::ios::out);
+    boost::iostreams::filtering_ostream out;
+    if (path.substr(path.length() - 3) == ".gz") {
+        out.push(boost::iostreams::gzip_compressor());
+    }
+    out.push(file);
     int c_ct = 0, p_ct = 0;
     for (auto &cluster: clusters) {
         if (cluster.size() > 100) {
