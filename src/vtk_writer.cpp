@@ -1,8 +1,10 @@
 #include "vtk_writer.h"
 #include "voxel_set.h"
+#include "watershed.h"
 #undef __DEPRECATED
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
+#include <vtkRectilinearGrid.h>
 #include <vtkSmartPointer.h>
 #include <vtkCellData.h>
 #include <vtkCellArray.h>
@@ -10,6 +12,7 @@
 #include <vtkDoubleArray.h>
 #include <vtkVertex.h>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkXMLRectilinearGridWriter.h>
 #include <vtkPolyVertex.h>
 #define __DEPRECATED
 
@@ -51,5 +54,31 @@ void vtk_writer::write(std::string path) {
     auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
     writer->SetFileName(path.c_str());
     writer->SetInput(_pimpl->polydata);
+    writer->Write();
+}
+
+void write_image(const Image& image) {
+    auto grid = vtkSmartPointer<vtkRectilinearGrid>::New();
+    auto x_coord = vtkSmartPointer<vtkDoubleArray>::New();
+    auto y_coord = vtkSmartPointer<vtkDoubleArray>::New();
+    auto z_coord = vtkSmartPointer<vtkDoubleArray>::New();
+    grid->SetExtent(0, image.L, 0, image.M, 0, image.N); 
+    for (int i=0; i<image.L+1; ++i) x_coord->InsertNextValue(i);
+    for (int i=0; i<image.M+1; ++i) y_coord->InsertNextValue(i);
+    for (int i=0; i<image.N+1; ++i) z_coord->InsertNextValue(i);
+    grid->SetXCoordinates(x_coord); 
+    grid->SetYCoordinates(y_coord); 
+    grid->SetZCoordinates(z_coord); 
+
+    auto v = vtkSmartPointer<vtkDoubleArray>::New();
+    v->SetName("d");
+    v->SetNumberOfComponents(1);
+    for (auto x: image.data) {
+        v->InsertNextTuple(&x);
+    }
+    grid->GetCellData()->AddArray(v);
+    auto writer = vtkSmartPointer<vtkXMLRectilinearGridWriter>::New();
+    writer->SetFileName("test-image.vtr");
+    writer->SetInput(grid);
     writer->Write();
 }

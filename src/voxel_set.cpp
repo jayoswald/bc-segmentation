@@ -29,11 +29,11 @@ VoxelSet read_voxelset(std::string path, int i) {
                 }
                 else {
                     vs.xlo = std::min(vs.xlo, v.i);
-                    vs.xhi = std::max(vs.xlo, v.i);
+                    vs.xhi = std::max(vs.xhi, v.i);
                     vs.ylo = std::min(vs.ylo, v.j);
-                    vs.yhi = std::max(vs.ylo, v.j);
+                    vs.yhi = std::max(vs.yhi, v.j);
                     vs.zlo = std::min(vs.zlo, v.k);
-                    vs.zhi = std::max(vs.zlo, v.k);
+                    vs.zhi = std::max(vs.zhi, v.k);
                 }
             }
         }

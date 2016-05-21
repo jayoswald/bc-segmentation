@@ -7,6 +7,7 @@
 #include "voxel_set.h"
 #include "vtk_writer.h"
 #include "string_tools.h"
+#include "watershed.h"
 
 int main(int argc, char **argv) {
     VoxelSet voxels;    
@@ -22,6 +23,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
     auto graph = voxelset_to_graph(voxels);
+    /*
     auto timer = Timer();
     auto cb = betweeness_centrality(graph);
     std::cout << "Computed centrality in " << timer.elapsed() << " seconds\n";
@@ -32,5 +34,7 @@ int main(int argc, char **argv) {
     vtk_writer writer(voxels);
     writer.write_centrality(cb);
     writer.write("voxels.vtp");
+*/
+    auto image = watershed(voxels);
+    write_image(image);
 }
-

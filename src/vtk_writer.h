@@ -5,6 +5,7 @@
 
 class VoxelSet;
 class vtkData;
+class Image;
 
 class vtk_writer {
 public:
@@ -19,3 +20,5 @@ private:
     std::unique_ptr<impl> _pimpl;
 };
 
+// Writes vtk rectilinear grid for the distance function.
+void write_image(const Image& image);
