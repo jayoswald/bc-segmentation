@@ -1,0 +1,23 @@
+*******************************************************************************
+COMPILING NOTES:
+*******************************************************************************
+
+Ubuntu Packages required for compilation
+  + libboost-iostreams-dev
+  + libvtk5-dev
+*******************************************************************************
+PROGRAM DESCRIPTIONS:
+*******************************************************************************
+bc 
+Usage: 
+    bc [inputfile] [output vtk] 
+Description:
+    Computes betweenness centrality (in progress)
+*******************************************************************************
+split 
+  Usage: 
+    split [input voxel file] [output voxel file]
+
+    Fast code for dividing up a voxel data set into clusters of contiguous
+    voxels, (i.e. voxels that share a face, but not an edge). 
+*******************************************************************************

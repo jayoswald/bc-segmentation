@@ -2,25 +2,33 @@
 #include <algorithm>
 #include <fstream>
 #include "string_tools.h"
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 
 //! Reads a set of voxels from an input file containing multiple clusters.
 VoxelSet read_voxelset(std::string path, int i) {
     VoxelSet vs;
-    std::fstream fid(path, std::ios::in);
+    std::ifstream file(path, std::ios::in|std::ios::binary);
+    boost::iostreams::filtering_istream in;
+    if (path.substr(path.length() - 3) == ".gz") {
+        std::cout << "Using gzip decompressor\n";
+        in.push(boost::iostreams::gzip_decompressor());
+    }
+    in.push(file);
     int ct = 0;
-    while (fid) {
-        auto line = read_line(fid);
+    while (in) {
+        auto line = read_line(in);
         if (startswith(line, "begin cluster")) {
             ct += 1;
         }
-        else if (startswith(line, "end cluster") && ct == i) {
-            break;
+        else if (startswith(line, "end cluster")) {
+            if (ct == i) break;
         }
-        else if (ct == i) {
+        else if (ct == i || i == 0) {
             Voxel v;
             std::istringstream ss(line);
             ss >> v.i >> v.j >> v.k;
-            if (fid) {
+            if (in) {
                 vs.voxels.push_back(v);
                 if (vs.voxels.size() == 1) {
                     vs.xlo = vs.xhi = v.i;
@@ -39,6 +47,7 @@ VoxelSet read_voxelset(std::string path, int i) {
         }
     }
     std::sort(vs.voxels.begin(), vs.voxels.end());
+    std::cout << "Read " << vs.voxels.size() << " voxels.\n";
     return vs;
 }
 

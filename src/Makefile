@@ -12,13 +12,12 @@ LFLAGS+=-L$(wildcard /usr/lib/vtk-5.*) -lvtkIO -lvtkCommon -lvtkFiltering
 
 # Linker flags
 CFLAGS+= -frounding-math
-LFLAGS+=-lpthread
+LFLAGS+=-lpthread -lboost_iostreams -lz
 
-SRC=$(wildcard *.cpp)
+SRC=graph.cpp voxel_set.cpp vtk_writer.cpp watershed.cpp
 OBJ=$(SRC:.cpp=.o)
-EXE=bc
 
-all: $(SRC) $(EXE) $(OBJ) tags
+all: $(SRC) bc split $(OBJ) tags
 all: CFLAGS+=-O3 -fopenmp
 all: LFLAGS+= -fopenmp
 
@@ -36,11 +35,14 @@ doc:
 tags: $(SRC)
 	@ctags -R .
 
-$(EXE): $(OBJ) $(EX_LIB_FILE)
-	$(CXX) $(OBJ) $(LFLAGS) -o $@
+bc: main.o $(OBJ) 
+	$(CXX) main.o $(OBJ) $(LFLAGS) -o bc
+
+split: split.o $(OBJ)
+	$(CXX) split.o $(OBJ) $(LFLAGS) -o split
 
 .cpp.o:
 	$(CXX) -c -std=c++14 $(CFLAGS) $< -o $@
 
 clean:
-	@rm -f $(OBJ) tags
+	@rm -f *.o tags

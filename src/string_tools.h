@@ -34,7 +34,8 @@ std::ostream& operator<<(std::ostream& o, std::vector<T> x) {
 }
 
 //! Reads the next line of a file.
-inline std::string read_line(std::fstream &fid) {
+template <typename STREAM>
+inline std::string read_line(STREAM &fid) {
     std::string line;
     getline(fid, line);
     return line;
