@@ -16,10 +16,8 @@ public:
     int zlo, zhi;
 };
 
-//! Reads a set of voxels from an input file.
-VoxelSet read_voxelset(std::string path);
 //! Reads a set of voxels from an input file containing multiple clusters.
-VoxelSet read_voxelset(std::string path, int i);
+VoxelSet read_voxelset(std::string path, int i=0);
 //! Builds a graph from a set of voxels.
 Graph voxelset_to_graph(const VoxelSet &voxels);
 

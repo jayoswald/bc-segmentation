@@ -3,18 +3,6 @@
 #include <fstream>
 #include "string_tools.h"
 
-VoxelSet read_voxelset(std::string path) {
-    VoxelSet vs; 
-    std::fstream fid(path, std::ios::in);
-    while (fid) {
-        Voxel v;
-        fid >> v.i >> v.j >> v.k;
-        if (fid) vs.voxels.push_back(v);
-    }
-    std::sort(vs.voxels.begin(), vs.voxels.end());
-    return vs;
-}
-
 //! Reads a set of voxels from an input file containing multiple clusters.
 VoxelSet read_voxelset(std::string path, int i) {
     VoxelSet vs;
@@ -34,6 +22,19 @@ VoxelSet read_voxelset(std::string path, int i) {
             ss >> v.i >> v.j >> v.k;
             if (fid) {
                 vs.voxels.push_back(v);
+                if (vs.voxels.size() == 1) {
+                    vs.xlo = vs.xhi = v.i;
+                    vs.ylo = vs.yhi = v.j;
+                    vs.zlo = vs.zhi = v.k;
+                }
+                else {
+                    vs.xlo = std::min(vs.xlo, v.i);
+                    vs.xhi = std::max(vs.xlo, v.i);
+                    vs.ylo = std::min(vs.ylo, v.j);
+                    vs.yhi = std::max(vs.ylo, v.j);
+                    vs.zlo = std::min(vs.zlo, v.k);
+                    vs.zhi = std::max(vs.zlo, v.k);
+                }
             }
         }
     }
@@ -42,10 +43,8 @@ VoxelSet read_voxelset(std::string path, int i) {
 }
 
 Graph voxelset_to_graph(const VoxelSet &vs) {
-
     Graph g;
     g.neighbors.assign(vs.voxels.size(), {});
-
     int num_neighbors = 0;
     for (int v=0; v<vs.voxels.size(); ++v) {
         g.vertices.push_back(v);
