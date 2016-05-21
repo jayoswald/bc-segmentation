@@ -7,12 +7,21 @@ struct Voxel {
     Voxel neighbor(int n) const;
 };
 
+class VoxelSet {
+public:
+    size_t index(const Voxel &v) const;
+    std::vector<Voxel> voxels;
+    int xlo, xhi;
+    int ylo, yhi;
+    int zlo, zhi;
+};
+
 //! Reads a set of voxels from an input file.
-std::vector<Voxel> read_voxelset(std::string path);
+VoxelSet read_voxelset(std::string path);
 //! Reads a set of voxels from an input file containing multiple clusters.
-std::vector<Voxel> read_voxelset(std::string path, int i);
+VoxelSet read_voxelset(std::string path, int i);
 //! Builds a graph from a set of voxels.
-Graph voxelset_to_graph(std::vector<Voxel> &voxels);
+Graph voxelset_to_graph(const VoxelSet &voxels);
 
 inline bool operator<(const Voxel &a, const Voxel &b) {
     if (a.k < b.k) return true;
@@ -68,8 +77,8 @@ inline Voxel Voxel::neighbor(int n) const {
 /*! Returns the index of a voxel v in a sorted voxel set.  If v is not found
   ! then return -1.  
   !*/
-inline size_t index(const std::vector<Voxel> &vs, const Voxel &v) {
-    auto iter = std::lower_bound(vs.begin(), vs.end(), v);
-    if (iter == vs.end() || *iter != v) return -1;
-    return std::distance(vs.begin(), iter);
+inline size_t VoxelSet::index(const Voxel &v) const {
+    auto iter = std::lower_bound(voxels.begin(), voxels.end(), v);
+    if (iter == voxels.end() || *iter != v) return -1;
+    return std::distance(voxels.begin(), iter);
 }

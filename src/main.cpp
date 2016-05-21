@@ -9,7 +9,7 @@
 #include "string_tools.h"
 
 int main(int argc, char **argv) {
-    std::vector<Voxel> voxels;    
+    VoxelSet voxels;    
     if (argc == 2) {
         voxels = read_voxelset(argv[1]); 
     }

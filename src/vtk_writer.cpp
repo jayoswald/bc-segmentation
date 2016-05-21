@@ -17,11 +17,11 @@ struct vtk_writer::impl {
     vtkSmartPointer<vtkPolyData> polydata;
 };
 
-vtk_writer::vtk_writer(const std::vector<Voxel> &voxels) 
+vtk_writer::vtk_writer(const VoxelSet &vs) 
 : _pimpl(new vtk_writer::impl) {
     auto points = vtkSmartPointer<vtkPoints>::New();
     auto vertices = vtkSmartPointer<vtkPolyVertex>::New();
-    for (auto &voxel: voxels) {
+    for (auto &voxel: vs.voxels) {
         double h = 1.0;
         double coord[] = {h*voxel.i, h*voxel.j, h*voxel.k};
         points->InsertNextPoint(coord);
