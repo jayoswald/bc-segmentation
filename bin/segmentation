@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+import subprocess
+import sys
+import re
+
+def main():
+    ''' Recursively split all ... '''
+
+    if len(sys.argv) != 2:
+        print 'segmentation [voxel-file]'
+        sys.exit(1)
+    else:
+        input_file = sys.argv[1] 
+        output_file = 'particles-fs.gz'
+
+    # First do a fast-split
+    n = fast_split(input_file, output_file)
+
+    for i in range(1, n+1):
+        bc_split(output_file, i) 
+
+
+def fast_split(input_file, output_file):
+    cmd = ['./split', input_file, 'particles-fs.gz']
+    pid = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    out = pid.communicate()[0]
+    m = re.search('particles, and (\d+) clusters', out)
+    return int(m.group(1))
+
+def bc_split(input_file, i):
+    cmd = ['./bc', input_file, str(i), 'split-{}.gz'.format(i)]
+    pid = subprocess.Popen(cmd), stdout=subprocess.PIPE)
+    out = pid.communicate()[0]
+
+    m1 = re.search('Removed (\d+) bridging particles', out)
+    m2 = re.search('Found (\d+) clusters', out)
+    if m1 and m2:
+        print m1.group(0), m2.group(0)
+        return int(m1.group(1)), int(m2.group(1))
+
+if __name__ == '__main__': main()

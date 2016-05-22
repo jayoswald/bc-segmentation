@@ -1,6 +1,8 @@
 result
 src/bc
+bin/bc
 src/split
+bin/split
 *.vtp
 *.o
 tags

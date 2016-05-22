@@ -14,10 +14,10 @@ LFLAGS+=-L$(wildcard /usr/lib/vtk-5.*) -lvtkIO -lvtkCommon -lvtkFiltering
 CFLAGS+= -frounding-math
 LFLAGS+=-lpthread -lboost_iostreams -lz
 
-SRC=graph.cpp voxel_set.cpp vtk_writer.cpp watershed.cpp
+SRC=graph.cpp voxel_set.cpp vtk_writer.cpp watershed.cpp fast_clustering.cpp
 OBJ=$(SRC:.cpp=.o)
 
-all: $(SRC) bc split $(OBJ) tags
+all: $(SRC) bc split $(OBJ) tags install
 all: CFLAGS+=-O3 -fopenmp
 all: LFLAGS+= -fopenmp
 
@@ -40,6 +40,9 @@ bc: main.o $(OBJ)
 
 split: split.o $(OBJ)
 	$(CXX) split.o $(OBJ) $(LFLAGS) -o split
+
+install:
+	@cp bc split ../bin
 
 .cpp.o:
 	$(CXX) -c -std=c++14 $(CFLAGS) $< -o $@
