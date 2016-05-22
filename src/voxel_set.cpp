@@ -5,7 +5,7 @@
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 
-//! Reads a set of voxels from an input file containing multiple clusters.
+// Reads a set of voxels from an input file containing multiple clusters.
 VoxelSet read_voxelset(std::string path, int i) {
     VoxelSet vs;
     std::ifstream file(path, std::ios::in|std::ios::binary);
@@ -64,8 +64,6 @@ Graph voxelset_to_graph(const VoxelSet &vs) {
             }
         }
     }
-    std::cout << "Read " << vs.voxels.size() << " voxels connected with "
-              << num_neighbors << " neighbors.\n";
     return g;
 }
 

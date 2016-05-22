@@ -5,12 +5,10 @@
 Clusters clustering(const VoxelSet &vs);
 
 int main(int narg, char **argv) {
-    if (narg != 3) {
-        std::cerr << "split [voxelfile] [output].\n";
+    if (narg != 2) {
+        std::cerr << "split [voxelfile].\n";
         exit(1);
     }
     auto vs = read_voxelset(argv[1]);
-    auto clusters = fast_clustering(vs);
-    std::string path = argv[2]; 
-    write_clusters(path, clusters, vs);
+    write_clusters("p", 1, fast_clustering(vs), vs);
 }
