@@ -66,7 +66,7 @@ def bc_split(input_file, i, output_file):
     m1 = re.search('Removing (\d+) bridging particles', out)
     m2 = re.search('Found (\d+) clusters', out)
     if m1 and m2:
-        print m1.group(0), m2.group(0)
+        print '{}:'.format(i), m1.group(0), m2.group(0)
         return int(m1.group(1)), int(m2.group(1))
 
 if __name__ == '__main__': main()
