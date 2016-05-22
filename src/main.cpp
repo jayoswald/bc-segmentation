@@ -21,13 +21,14 @@ int main(int argc, char **argv) {
     vs = read_voxelset(input);
     auto timer = Timer();
     auto cb = betweeness_centrality(voxelset_to_graph(vs));
-    auto iter = std::max_element(cb.begin(), cb.end());
+    auto max_cb = *std::max_element(cb.begin(), cb.end());
     std::cout << "Computed centrality in " << timer.elapsed() << " seconds\n"
-              << "Maximum centrality value is " << *iter << "\n";
+              << "Maximum centrality value is " << max_cb << "\n";
     std::vector<int> erase;
-    double cb_threshold = 0.3;
+    double cb_threshold = 0.2;
     for (int i=0; i<cb.size(); ++i) {
-        if (cb[i] > cb_threshold) {
+        if (cb[i] > cb_threshold &&
+            (vs.coordination(vs.voxels[i]) < 6 || cb[i] == max_cb)) {
             erase.push_back(i);
         }
     }

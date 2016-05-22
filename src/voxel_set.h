@@ -10,6 +10,7 @@ struct Voxel {
 class VoxelSet {
 public:
     size_t index(const Voxel &v) const;
+    int coordination(const Voxel &v) const;
     std::vector<Voxel> voxels;
     int xlo, xhi;
     int ylo, yhi;

@@ -5,6 +5,16 @@
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 
+int VoxelSet::coordination(const Voxel &v) const {
+    int c = 0;
+    for (int i=0; i<6; ++i) {
+        if (index(v.neighbor(i)) > -1) {
+            c += 1;
+        }
+    }
+    return c;
+}
+
 // Reads a set of voxels from an input file containing multiple clusters.
 VoxelSet read_voxelset(std::string path, int i) {
     VoxelSet vs;
