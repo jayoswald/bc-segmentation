@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+import vtk
+import sys
+import gzip
+
+def main():
+
+    if len(sys.argv) < 3:
+        print 'particles2vtk [vtk] [particle files ... ]'
+        sys.exit(1)    
+
+    vtk_file = sys.argv[1]
+    particle_files = sys.argv[2:]
+
+    particles = []
+    for f in particle_files:
+        fid = gzip.open(f, 'rb')
+        particles.append([])
+        for line in fid:
+            particles[-1].append((int(s) for s in line.split()))
+    write_vtk_file(vtk_file, particles)
+    
+def write_vtk_file(path, particles):
+    points = vtk.vtkPoints()
+    cells = vtk.vtkCellArray()
+    
+    for vertices in particles:
+        polyvertex = vtk.vtkPolyVertex()
+        for v in vertices:
+            points.InsertNextPoint(*v)
+            polyvertex.GetPointIds().InsertNextId(points.GetNumberOfPoints()-1)
+        cells.InsertNextCell(polyvertex)
+
+    polydata = vtk.vtkPolyData()
+    polydata.SetPoints(points)
+    polydata.SetVerts(cells)
+
+    v1 = vtk.vtkIntArray()
+    v1.SetNumberOfComponents(1)
+    v1.SetName('size')
+    for p in particles:
+        v1.InsertNextTuple([len(p)])
+    polydata.GetCellData().AddArray(v1) 
+
+    v2 = vtk.vtkIntArray()
+    v2.SetNumberOfComponents(1)
+    v2.SetName('id')
+    for i,p in enumerate(particles):
+        v2.InsertNextTuple([i+1])
+    polydata.GetCellData().AddArray(v2)
+
+    writer = vtk.vtkXMLPolyDataWriter()
+    writer.SetFileName(path)
+    writer.SetInput(polydata)
+    writer.Write()
+
+
+if __name__ == '__main__': main()
+
