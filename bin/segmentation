@@ -50,7 +50,7 @@ def split_clusters(input_file, split_list, iteration):
             else:
                 merged.write(line)
         os.remove(temp_file)
-    return merged, next_split
+    return temp_file, next_split
         
 def fast_split(input_file, output_file):
     cmd = [split_exe, input_file, 'particles-fs.gz']
