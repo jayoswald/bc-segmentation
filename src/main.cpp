@@ -31,10 +31,12 @@ int main(int argc, char **argv) {
             erase.push_back(i);
         }
     }
-    std::remove_if(vs.voxels.begin(), vs.voxels.end(), [&](const Voxel &v) {
+    auto pred = [&](const Voxel &v) {
         int index = &v - &vs.voxels[0];
         return std::binary_search(erase.begin(), erase.end(), index);
-    });
+    };
+    vs.voxels.erase(std::remove_if(vs.voxels.begin(), vs.voxels.end(), pred), 
+                    vs.voxels.end());
     std::cout << "Removed " << erase.size() << " bridging voxels.\n";
     write_clusters("p", i0, fast_clustering(vs), vs);
 }
