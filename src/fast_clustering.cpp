@@ -38,7 +38,7 @@ Clusters fast_clustering(const VoxelSet &vs) {
 }
 
 void write_clusters(std::string tag, int i0, const Clusters &c, VoxelSet &vs) {
-    for (int i=0; i<c.size(); ++i) {
+    for (size_t i=0; i<c.size(); ++i) {
         auto path = tag + "-" + make_string(i0+i, 5) + ".gz";
         std::fstream file(path, std::ios::out|std::ios::binary);
         boost::iostreams::filtering_ostream out;

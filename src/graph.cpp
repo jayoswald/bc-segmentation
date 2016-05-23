@@ -19,7 +19,7 @@ std::vector<double> betweeness_centrality(const Graph &g) {
     std::vector<double> cb(N, 0.0);
 
     #pragma omp parallel for
-    for (int k=0; k<g.vertices.size(); ++k) { 
+    for (size_t k=0; k<g.vertices.size(); ++k) { 
         // Start at a vertex s.
         auto s = g.vertices[k];
         auto P = std::vector<Paths>(N);
@@ -59,9 +59,9 @@ std::vector<double> betweeness_centrality(const Graph &g) {
             }
         }
     }
+    // TODO: why is this needed?
     for (auto &x: cb) {
         x /= 2.0;
-        //x *= 2.0 / ((N-1)*(N-2));
     }
     return cb;
 }

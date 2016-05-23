@@ -9,7 +9,7 @@ struct Voxel {
 
 class VoxelSet {
 public:
-    size_t index(const Voxel &v) const;
+    int index(const Voxel &v) const;
     int coordination(const Voxel &v) const;
     std::vector<Voxel> voxels;
     int xlo, xhi;
@@ -76,7 +76,7 @@ inline Voxel Voxel::neighbor(int n) const {
 /*! Returns the index of a voxel v in a sorted voxel set.  If v is not found
   ! then return -1.  
   !*/
-inline size_t VoxelSet::index(const Voxel &v) const {
+inline int VoxelSet::index(const Voxel &v) const {
     auto iter = std::lower_bound(voxels.begin(), voxels.end(), v);
     if (iter == voxels.end() || *iter != v) return -1;
     return std::distance(voxels.begin(), iter);

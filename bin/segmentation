@@ -7,8 +7,8 @@ import gzip
 import glob
 
 bin_path = os.path.dirname(__file__)
-split_exe = os.path.join(bin_path, 'split')
-bc_exe = os.path.join(bin_path, 'bc')
+split_exe = os.path.join(bin_path, 'fast-split')
+bc_exe = os.path.join(bin_path, 'segment')
 
 def main():
     ''' Recursively splits all clusters in voxel-file into 

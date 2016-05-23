@@ -24,10 +24,11 @@ int main(int argc, char **argv) {
     auto cb = betweeness_centrality(voxelset_to_graph(vs));
 
     // convert CB to relative centrality.
-    for (int i=0; i<cb.size(); ++i) {
+    for (size_t i=0; i<cb.size(); ++i) {
         auto n = vs.voxels.size();
-        // HACK - factor of 1/2 is not understood.
-        cb[i] *= 0.5;
+        // Compute normalized centrality.
+        cb[i] *= 2.0 / ((n-1)*(n-2));
+        // Compute relative centrality.
         cb[i] /= 2.49 * pow(n,-0.645);
     }
 
@@ -35,7 +36,7 @@ int main(int argc, char **argv) {
     std::cout << "Computed centrality in " << timer.elapsed() << " seconds\n"
               << "Maximum centrality value is " << max_cb << "\n";
     std::vector<int> erase;
-    for (int i=0; i<cb.size(); ++i) {
+    for (size_t i=0; i<cb.size(); ++i) {
         if (cb[i] > cb_threshold &&
             (vs.coordination(vs.voxels[i]) < 6 || cb[i] == max_cb)) {
             erase.push_back(i);

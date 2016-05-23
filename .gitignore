@@ -1,8 +1,6 @@
 result
-src/bc
-bin/bc
-src/split
-bin/split
+bin/segment
+bin/fast-split
 *.vtp
 *.o
 tags

@@ -64,7 +64,7 @@ Graph voxelset_to_graph(const VoxelSet &vs) {
     Graph g;
     g.neighbors.assign(vs.voxels.size(), {});
     int num_neighbors = 0;
-    for (int v=0; v<vs.voxels.size(); ++v) {
+    for (size_t v=0; v<vs.voxels.size(); ++v) {
         g.vertices.push_back(v);
         for (int n=0; n<6; n++) {
             auto nv = vs.index(vs.voxels[v].neighbor(n));
