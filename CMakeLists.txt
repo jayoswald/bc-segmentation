@@ -1,13 +1,11 @@
 cmake_minimum_required (VERSION 2.8.8)
 project (segmentation)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -std=c++14 -Wall")
-#add_definitions(${CXX_FLAGS})
-
 find_package(OpenMP REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system iostreams)
 find_package(ZLIB REQUIRED)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -std=c++11 -Wall")
 set(COMMON_SRC src/voxel_set.cpp src/fast_clustering.cpp src/graph.cpp)
 
 add_executable(fast-split src/fast_split.cpp)
