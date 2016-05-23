@@ -6,3 +6,4 @@ bin/split
 *.vtp
 *.o
 tags
+build

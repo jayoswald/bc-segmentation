@@ -43,7 +43,7 @@ def merge_finished():
 def split_cluster(input_file):
     '''  '''
     next_id = highest_file('p-*.gz') + 1
-    cmd = [bc_exe, input_file, str(next_id)]
+    cmd = [bc_exe, input_file, str(next_id), '2.0']
     pid = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     stdout = pid.communicate()[0]
     print stdout

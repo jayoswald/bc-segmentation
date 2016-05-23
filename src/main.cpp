@@ -11,21 +11,30 @@
 int main(int argc, char **argv) {
     VoxelSet vs;    
 
-    if (argc != 3) {
-        std::cerr << "bc [voxelfile] [i0]\n";
+    if (argc != 4) {
+        std::cerr << "bc [voxelfile] [i0] [threshold]\n";
         exit(1);
     }
     auto input = argv[1];
     auto i0 = from_string<int>(argv[2]);
+    auto cb_threshold = from_string<double>(argv[3]);
 
     vs = read_voxelset(input);
     auto timer = Timer();
     auto cb = betweeness_centrality(voxelset_to_graph(vs));
+
+    // convert CB to relative centrality.
+    for (int i=0; i<cb.size(); ++i) {
+        auto n = vs.voxels.size();
+        // HACK - factor of 1/2 is not understood.
+        cb[i] *= 0.5;
+        cb[i] /= 2.49 * pow(n,-0.645);
+    }
+
     auto max_cb = *std::max_element(cb.begin(), cb.end());
     std::cout << "Computed centrality in " << timer.elapsed() << " seconds\n"
               << "Maximum centrality value is " << max_cb << "\n";
     std::vector<int> erase;
-    double cb_threshold = 0.2;
     for (int i=0; i<cb.size(); ++i) {
         if (cb[i] > cb_threshold &&
             (vs.coordination(vs.voxels[i]) < 6 || cb[i] == max_cb)) {

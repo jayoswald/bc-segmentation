@@ -60,7 +60,8 @@ std::vector<double> betweeness_centrality(const Graph &g) {
         }
     }
     for (auto &x: cb) {
-        x *= 2.0 / ((N-1)*(N-2));
+        x /= 2.0;
+        //x *= 2.0 / ((N-1)*(N-2));
     }
     return cb;
 }
